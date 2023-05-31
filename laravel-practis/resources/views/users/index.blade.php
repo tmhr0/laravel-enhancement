@@ -22,13 +22,22 @@
                                 <td>{{ $user->id }}</td>
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->company->name }}</td>
-                                @foreach($user->sections as $section)
-                                    <td>{{ $section->name }}</td>
-                                @endforeach
+                                <td>
+                                    @if ($user->sections->isEmpty())
+                                        {{ __('未登録') }}
+                                    @else
+                                        @foreach($user->sections as $section)
+                                            {{ $section->name }}
+                                        @endforeach
+                                    @endif
+                                </td>
                             </tr>
                         @endforeach
                         </tbody>
                     </table>
+
+                    <!-- ページネーションのリンク表示 -->
+                    {{ $users->links() }}
                 </div>
             </div>
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
