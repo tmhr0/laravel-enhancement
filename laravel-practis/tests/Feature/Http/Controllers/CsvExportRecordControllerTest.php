@@ -3,9 +3,7 @@
 namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Company;
-use App\Models\Section;
 use App\Models\User;
-use App\Models\CsvExportRecord;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -14,6 +12,7 @@ class CsvExportRecordControllerTest extends TestCase
 {
     use RefreshDatabase;
     use WithFaker;
+
     public function setUp(): void
     {
         parent::setUp();
