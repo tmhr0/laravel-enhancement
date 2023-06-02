@@ -5,8 +5,13 @@
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                    <div class="max-w-xl">
                         <h1>{{ __('ユーザー一覧') }}</h1>
+                        <form method="POST" action="{{ route('users.csv-export-records.store') }}">
+                            @csrf
+                            <button class="btn btn-primary">
+                                CSVダウンロード
+                            </button>
+                        </form>
                         <table class="table table-striped">
                             <thead>
                             <tr>
@@ -37,12 +42,11 @@
                         </table>
 
                         <!-- ページネーションのリンク表示 -->
-                        {{ $users->links() }}
-                    </div>
+                    {{ $users->links() }}
                 </div>
-                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                    <div class="max-w-xl">
-                    </div>
+            </div>
+            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+                <div class="max-w-xl">
                 </div>
             </div>
         </div>
