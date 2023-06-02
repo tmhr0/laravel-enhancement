@@ -10,7 +10,8 @@
                         <div class="col-lg-8">
                             <form method="GET" action="{{ route('users.index') }}">
                                 <label>
-                                    <input type="text" name="search" class="form-control" placeholder="名前を入力してください">
+                                    <input type="text" name="search" class="form-control"
+                                           value="{{ request('search') }}" placeholder="名前を入力してください">
                                 </label>
                                 <button type="submit" class="btn btn-primary btn-lg">検索</button>
                             </form>
