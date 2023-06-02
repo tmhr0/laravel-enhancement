@@ -50,7 +50,7 @@
                         </table>
 
                         <!-- ページネーションのリンク表示 -->
-                        {{ $users->links() }}
+                        {{ $users->appends(request()->query())->links() }}
                     </div>
                 </div>
             </div>
