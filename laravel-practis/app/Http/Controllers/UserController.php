@@ -14,7 +14,6 @@ class UserController extends Controller
             'search' => [
                 'nullable',
                 'string',
-                'min:3',
                 'max:20',
             ],
         ]);
