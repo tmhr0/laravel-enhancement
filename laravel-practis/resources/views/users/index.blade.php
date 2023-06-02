@@ -15,6 +15,9 @@
                                 </label>
                                 <button type="submit" class="btn btn-primary btn-lg">検索</button>
                             </form>
+                            @error('search')
+                            <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <table class="table table-striped">

@@ -10,6 +10,15 @@ class UserController extends Controller
 {
     public function index(Request $request): View
     {
+        $request->validate([
+            'search' => [
+                'nullable',
+                'string',
+                'min:3',
+                'max:20',
+            ],
+        ]);
+
         $search = $request->input('search');
 
         $users = User::with(['company', 'sections'])
