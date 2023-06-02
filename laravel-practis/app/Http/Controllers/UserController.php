@@ -14,15 +14,7 @@ class UserController extends Controller
 
         $users = User::with(['company', 'sections'])
             ->when($search, function ($query) use ($search) {
-                $query->where(function ($query) use ($search) {
-                    $query->where('name', 'like', "%$search%")
-                        ->orWhereHas('company', function ($query) use ($search) {
-                            $query->where('name', 'like', "%$search%");
-                        })
-                        ->orWhereHas('sections', function ($query) use ($search) {
-                            $query->where('name', 'like', "%$search%");
-                        });
-                });
+                $query->search($search);
             })
             ->paginate(10);
 
