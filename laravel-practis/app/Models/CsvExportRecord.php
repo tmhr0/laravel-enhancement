@@ -13,6 +13,7 @@ class CsvExportRecord extends Model
     protected $fillable = [
         'download_user_id',
         'file_name',
+        'file_path',
     ];
 
     public function user(): BelongsTo
