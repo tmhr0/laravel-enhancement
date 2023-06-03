@@ -53,6 +53,17 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    public function scopeSearch($query, $search)
+    {
+        return $query->where('name', 'like', "%$search%")
+            ->orWhereHas('company', function ($query) use ($search) {
+                $query->where('name', 'like', "%$search%");
+            })
+            ->orWhereHas('sections', function ($query) use ($search) {
+                $query->where('name', 'like', "%$search%");
+            });
+    }
+
     /**
      * The attributes that are mass assignable.
      *

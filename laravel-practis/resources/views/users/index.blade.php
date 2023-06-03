@@ -3,50 +3,61 @@
           integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     @can('view-page')
         <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                        <h1>{{ __('ユーザー一覧') }}</h1>
-                        <form method="POST" action="{{ route('users.csv-export-records.store') }}">
-                            @csrf
-                            <button class="btn btn-primary">
-                                CSVダウンロード
-                            </button>
-                        </form>
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <th>{{ __('ID') }}</th>
-                                <th>{{ __('名前') }}</th>
-                                <th>{{ __('所属  [会社]') }}</th>
-                                <th>{{ __('所属  [部署]') }}</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach($users as $user)
-                                <tr>
-                                    <td>{{ $user->id }}</td>
-                                    <td>{{ $user->name }}</td>
-                                    <td>{{ $user->company->name }}</td>
-                                    <td>
-                                        @if ($user->sections->isEmpty())
-                                            {{ __('未登録') }}
-                                        @else
-                                            @foreach($user->sections as $section)
-                                                {{ $section->name }}
-                                            @endforeach
-                                        @endif
-                                    </td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
+                    <h1>{{ __('ユーザー一覧') }}</h1>
+                    <div class="col-lg-8">
 
-                        <!-- ページネーションのリンク表示 -->
-                    {{ $users->links() }}
-                </div>
-            </div>
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
+                        <form method="GET" action="{{ route('users.index') }}">
+                            <label>
+                                <input type="text" name="search" class="form-control"
+                                       value="{{ request('search') }}" placeholder="名前を入力してください">
+                            </label>
+                            <button type="submit" class="btn btn-primary btn-lg">検索</button>
+                        </form>
+                        @error('search')
+                        <div class="alert alert-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>{{ __('ID') }}</th>
+                            <th>{{ __('名前') }}</th>
+                            <th>{{ __('所属  [会社]') }}</th>
+                            <th>{{ __('所属  [部署]') }}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($users as $user)
+                            <tr>
+                                <td>{{ $user->id }}</td>
+                                <td>{{ $user->name }}</td>
+                                <td>{{ $user->company->name }}</td>
+                                <td>
+                                    @if ($user->sections->isEmpty())
+                                        {{ __('未登録') }}
+                                    @else
+                                        @foreach($user->sections as $section)
+                                            {{ $section->name }}
+                                        @endforeach
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+
+                    <form method="POST" action="{{ route('users.csv-export-records.store') }}">
+                        @csrf
+                        <button class="btn btn-primary">
+                            CSVダウンロード
+                        </button>
+                    </form>
+
+                    <!-- ページネーションのリンク表示 -->
+                    {{ $users->appends(request()->query())->links() }}
                 </div>
             </div>
         </div>
