@@ -7,6 +7,19 @@
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                     <div class="max-w-xl">
                         <h1>{{ __('ユーザー一覧') }}</h1>
+                        <div class="col-lg-8">
+                            <form method="GET" action="{{ route('users.index') }}">
+                                <label>
+                                    <input type="text" name="search" class="form-control"
+                                           value="{{ request('search') }}" placeholder="名前を入力してください">
+                                </label>
+                                <button type="submit" class="btn btn-primary btn-lg">検索</button>
+                            </form>
+                            @error('search')
+                            <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <table class="table table-striped">
                             <thead>
                             <tr>
@@ -37,11 +50,7 @@
                         </table>
 
                         <!-- ページネーションのリンク表示 -->
-                        {{ $users->links() }}
-                    </div>
-                </div>
-                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                    <div class="max-w-xl">
+                        {{ $users->appends(request()->query())->links() }}
                     </div>
                 </div>
             </div>
