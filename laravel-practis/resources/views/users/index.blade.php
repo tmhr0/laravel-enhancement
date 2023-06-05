@@ -51,6 +51,8 @@
 
                     <form method="POST" action="{{ route('users.csv-export-records.store') }}">
                         @csrf
+                        @csrf
+                        <input type="hidden" name="search" value="{{ request('search') }}">
                         <button class="btn btn-primary">
                             CSVダウンロード
                         </button>

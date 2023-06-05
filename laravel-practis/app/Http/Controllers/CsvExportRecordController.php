@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CsvExportRecord;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,8 +19,12 @@ class CsvExportRecordController extends Controller
 
     public function store(Request $request): BinaryFileResponse
     {
-        // セッションから$usersを取得
-        $users = session()->get('users');
+        $searchQuery = $request->input('search');
+
+        // 検索結果から$usersを取得
+        $users = User::where('name', 'like', '%' . $searchQuery . '%')->get();
+
+
         $file_name = sprintf('users-%s.csv', now()->format('YmdHis'));
         $csvData = $this->generateCsvData($users);
 
