@@ -7,25 +7,30 @@
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                     <h1>{{ __('ユーザー一覧') }}</h1>
                     <div class="col-lg-12">
-
                         <form method="GET" action="{{ route('users.index') }}" class="form-inline">
                             <input type="text" name="search" class="form-control" value="{{ request('search') }}"
                                    placeholder="名前を入力してください">
-                            <input class="form-check-input" type="radio" name="search_option" id="search_user"
-                                   value="user" {{ request('search_option') == 'name' ? 'checked' : '' }}>
-                            <label class="form-check-label" for="search_name">
-                                ユーザー名
-                            </label>
-{{--                            <input class="form-check-input" type="radio" name="search_option" id="search_company"--}}
-{{--                                   value="company" {{ request('search_option') == 'company' ? 'checked' : '' }}>--}}
-{{--                            <label class="form-check-label" for="search_company">--}}
-{{--                                会社名--}}
-{{--                            </label>--}}
-{{--                            <input class="form-check-input" type="radio" name="search_option" id="search_section"--}}
-{{--                                   value="section" {{ request('search_option') == 'section' ? 'checked' : '' }}>--}}
-{{--                            <label class="form-check-label" for="search_section">--}}
-{{--                                部署名--}}
-{{--                            </label>--}}
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="search_option" id="search_name"
+                                       value="name" {{ request('search_option') === 'name' ? 'checked' : '' }}>
+                                <label class="form-check-label" for="search_name">
+                                    ユーザー名
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="search_option" id="search_company"
+                                       value="company" {{ request('search_option') === 'company' ? 'checked' : '' }}>
+                                <label class="form-check-label" for="search_company">
+                                    会社名
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="search_option" id="search_section"
+                                       value="section" {{ request('search_option') === 'section' ? 'checked' : '' }}>
+                                <label class="form-check-label" for="search_section">
+                                    部署名
+                                </label>
+                            </div>
                             <button type="submit" class="btn btn-primary btn-lg">検索</button>
                         </form>
                         @error('search')
