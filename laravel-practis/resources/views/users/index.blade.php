@@ -11,25 +11,19 @@
                             <input type="text" name="search" class="form-control" value="{{ request('search') }}"
                                    placeholder="名前を入力してください">
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="search_option" id="search_name"
-                                       value="name" {{ request('search_option') === 'name' ? 'checked' : '' }}>
-                                <label class="form-check-label" for="search_name">
-                                    ユーザー名
-                                </label>
+                                <input class="form-check-input" type="radio" name="search_option" id="search_user"
+                                       value="user" {{ request('search_option') === 'user' ? 'checked' : '' }}>
+                                <label class="form-check-label" for="search_user">ユーザー名</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="search_option" id="search_company"
                                        value="company" {{ request('search_option') === 'company' ? 'checked' : '' }}>
-                                <label class="form-check-label" for="search_company">
-                                    会社名
-                                </label>
+                                <label class="form-check-label" for="search_company">会社名</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="search_option" id="search_section"
                                        value="section" {{ request('search_option') === 'section' ? 'checked' : '' }}>
-                                <label class="form-check-label" for="search_section">
-                                    部署名
-                                </label>
+                                <label class="form-check-label" for="search_section">部署名</label>
                             </div>
                             <button type="submit" class="btn btn-primary btn-lg">検索</button>
                         </form>
@@ -69,8 +63,8 @@
 
                     <form method="POST" action="{{ route('users.csv-export-records.store') }}">
                         @csrf
-                        @csrf
                         <input type="hidden" name="search" value="{{ request('search') }}">
+                        <input type="hidden" name="search_option" value="{{ request('search_option') }}">
                         <button class="btn btn-primary">
                             CSVダウンロード
                         </button>

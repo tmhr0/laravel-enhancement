@@ -18,7 +18,7 @@ class UserController extends Controller
             ],
             'search_option' => [
                 'nullable',
-                'in:name,company,section',
+                'in:user,company,section',
             ],
         ]);
 
@@ -26,7 +26,7 @@ class UserController extends Controller
         $searchOption = $request->input('search_option');
 
         $users = User::with(['company', 'sections'])
-            ->when($search && $searchOption === 'name', function ($query) use ($search) {
+            ->when($search && $searchOption === 'user', function ($query) use ($search) {
                 $query->where('name', 'like', '%' . $search . '%');
             })
             ->when($search && $searchOption === 'company', function ($query) use ($search) {

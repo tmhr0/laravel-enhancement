@@ -17,36 +17,36 @@ class CsvExportRecordController extends Controller
         return view('users.csv-export-records.index');
     }
 
-    public function store(Request $request): BinaryFileResponse
+    public function store(Request $request): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
+        // 検索キーワードと検索オプションを取得
         $searchQuery = $request->input('search');
+        $searchOption = $request->input('search_option');
+
+        // ユーザーデータを検索
+        $users = User::query();
 
         // 検索結果から一致するユーザー名・会社名・部署名を$usersを取得
-        $users = User::where(function ($query) use ($searchQuery) {
-            $query->where('name', 'like', '%' . $searchQuery . '%')
-                ->orWhereHas('company', function ($query) use ($searchQuery) {
-                    $query->where('name', 'like', '%' . $searchQuery . '%');
-                })
-                ->orWhereHas('sections', function ($query) use ($searchQuery) {
-                    $query->where('name', 'like', '%' . $searchQuery . '%');
-                });
-        })->get();
+        if ($searchOption === 'user') {
+            $users = $users->where('name', 'like', '%' . $searchQuery . '%');
+        } elseif ($searchOption === 'company') {
+            $users = $users->whereHas('company', function ($query) use ($searchQuery) {
+                $query->where('name', 'like', '%' . $searchQuery . '%');
+            });
+        } elseif ($searchOption === 'section') {
+            $users = $users->whereHas('sections', function ($query) use ($searchQuery) {
+                $query->where('name', 'like', '%' . $searchQuery . '%');
+            });
+        }
+        $users = $users->get();
 
         $file_name = sprintf('users-%s.csv', now()->format('YmdHis'));
         $csvData = $this->generateCsvData($users);
 
-        //file_put_contents()  指定されたファイルにデータを書き込むために使われる
-        //第一引数に書き込むファイルのパスを、第二引数には書き込むデータを指定する
-        //public_path()  public ディレクトリ内にファイルを保存するために使われる
+        // file_put_contents() を使用してCSVデータをファイルに書き込む
         file_put_contents(public_path($file_name), $csvData);
 
-        //CsvExportRecordテーブルにデータを登録
-        CsvExportRecord::create([
-            'download_user_id' => Auth::user()->id,
-            'file_name' => $file_name,
-        ]);
-
-        return Response::download(public_path($file_name));
+        return response()->download(public_path($file_name));
     }
 
     private function generateCsvData($users)
