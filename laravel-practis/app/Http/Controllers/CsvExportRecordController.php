@@ -21,9 +21,16 @@ class CsvExportRecordController extends Controller
     {
         $searchQuery = $request->input('search');
 
-        // 検索結果から$usersを取得
-        $users = User::where('name', 'like', '%' . $searchQuery . '%')->get();
-
+        // 検索結果から一致するユーザー名・会社名・部署名を$usersを取得
+        $users = User::where(function ($query) use ($searchQuery) {
+            $query->where('name', 'like', '%' . $searchQuery . '%')
+                ->orWhereHas('company', function ($query) use ($searchQuery) {
+                    $query->where('name', 'like', '%' . $searchQuery . '%');
+                })
+                ->orWhereHas('sections', function ($query) use ($searchQuery) {
+                    $query->where('name', 'like', '%' . $searchQuery . '%');
+                });
+        })->get();
 
         $file_name = sprintf('users-%s.csv', now()->format('YmdHis'));
         $csvData = $this->generateCsvData($users);
