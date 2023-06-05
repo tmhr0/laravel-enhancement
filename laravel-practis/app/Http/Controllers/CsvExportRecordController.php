@@ -19,21 +19,18 @@ class CsvExportRecordController extends Controller
 
     public function store(Request $request): BinaryFileResponse
     {
-        // 検索キーワードと検索オプションを取得
         $searchQuery = $request->input('search');
-        $searchOption = $request->input('search_option');
-
-        // ユーザーデータを検索
-        $users = User::query();
 
         // 検索結果から一致するユーザー名・会社名・部署名を$usersを取得
-        if (!empty($searchQuery) && !empty($searchOption)) {
-            // 選択された検索オプションに基づいてクエリを組み立てる
-            if ($searchOption === 'user') {
-                $users->where('name', 'like', '%' . $searchQuery . '%');
-            }
-        }
-        $users = $users->get();
+        $users = User::where(function ($query) use ($searchQuery) {
+            $query->where('name', 'like', '%' . $searchQuery . '%')
+                ->orWhereHas('company', function ($query) use ($searchQuery) {
+                    $query->where('name', 'like', '%' . $searchQuery . '%');
+                })
+                ->orWhereHas('sections', function ($query) use ($searchQuery) {
+                    $query->where('name', 'like', '%' . $searchQuery . '%');
+                });
+        })->get();
 
         $file_name = sprintf('users-%s.csv', now()->format('YmdHis'));
         $csvData = $this->generateCsvData($users);
