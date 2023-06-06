@@ -24,17 +24,17 @@ class CsvExportRecordController extends Controller
         $searchOption = $request->input('search_option');
 
         // ユーザーデータを検索
-        $users = User::query();
+        $query = User::query();
 
         // 検索結果から一致するユーザー名・会社名・部署名を$usersを取得
         if ($searchOption === 'user') {
-            $users = $users->where('name', 'like', '%' . $searchQuery . '%');
+            $users = $query->where('name', 'like', '%' . $searchQuery . '%');
         } elseif ($searchOption === 'company') {
-            $users = $users->whereHas('company', function ($query) use ($searchQuery) {
+            $users = $query->whereHas('company', function ($query) use ($searchQuery) {
                 $query->where('name', 'like', '%' . $searchQuery . '%');
             });
         } elseif ($searchOption === 'section') {
-            $users = $users->whereHas('sections', function ($query) use ($searchQuery) {
+            $users = $query->whereHas('sections', function ($query) use ($searchQuery) {
                 $query->where('name', 'like', '%' . $searchQuery . '%');
             });
         }
