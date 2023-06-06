@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CsvExportRecord;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Response;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CsvExportRecordController extends Controller
 {
@@ -22,9 +21,9 @@ class CsvExportRecordController extends Controller
 
     /**
      * @param Request $request
-     * @return BinaryFileResponse
+     * @return StreamedResponse
      */
-    public function store(Request $request): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    public function store(Request $request)
     {
         // 検索キーワードと検索オプションを取得
         $searchQuery = $request->input('search');
@@ -45,15 +44,24 @@ class CsvExportRecordController extends Controller
                 $query->where('name', 'like', '%' . $searchQuery . '%');
             });
         }
-        $users = $users->get();
+        $users = $query->get();
 
         $file_name = sprintf('users-%s.csv', now()->format('YmdHis'));
         $csvData = $this->generateCsvData($users);
 
-        // file_put_contents() を使用してCSVデータをファイルに書き込む
-        file_put_contents(public_path($file_name), $csvData);
+        // Storage/app/csv でcsvディレクトリが存在しない場合は作成する
+        $directory = 'csv';
+        $path = $directory . '/' . $file_name;
 
-        return response()->download(public_path($file_name));
+        if (!File::exists($directory)) {
+            Storage::makeDirectory($directory);
+        }
+
+        // file_put_contents() を使用してCSVデータをファイルに書き込む
+        $file_path = storage_path('app/csv/' . $file_name);
+        file_put_contents($file_path, $csvData);
+
+        return Storage::download($path);
     }
 
     /**
