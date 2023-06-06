@@ -31,11 +31,8 @@ class CsvExportRecordController extends Controller
         $searchQuery = $request->input('search');
         $searchOption = $request->input('search_option');
 
-        // ユーザーデータを検索
-        $query = User::query();
-
         // 検索ワードに一致するユーザー名・会社名・部署名を取得
-        $users = $query->search($searchQuery, $searchOption)->get();
+        $users = User::search($searchQuery, $searchOption)->get();
 
         $file_name = sprintf('users-%s.csv', now()->format('YmdHis'));
         $csvData = $this->generateCsvData($users);
