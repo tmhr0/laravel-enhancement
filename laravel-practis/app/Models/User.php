@@ -53,15 +53,27 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    public function scopeSearch($query, $search)
+    /**
+     * @param $query
+     * @param $searchQuery
+     * @param $searchOption
+     * @return mixed
+     */
+    public function scopeSearch($query, $searchQuery, $searchOption): mixed
     {
-        return $query->where('name', 'like', "%$search%")
-            ->orWhereHas('company', function ($query) use ($search) {
-                $query->where('name', 'like', "%$search%");
-            })
-            ->orWhereHas('sections', function ($query) use ($search) {
-                $query->where('name', 'like', "%$search%");
+        if ($searchOption === 'user') {
+            return $query->where('name', 'like', '%' . $searchQuery . '%');
+        } elseif ($searchOption === 'company') {
+            return $query->whereHas('company', function ($query) use ($searchQuery) {
+                $query->where('name', 'like', '%' . $searchQuery . '%');
             });
+        } elseif ($searchOption === 'section') {
+            return $query->whereHas('sections', function ($query) use ($searchQuery) {
+                $query->where('name', 'like', '%' . $searchQuery . '%');
+            });
+        }
+
+        return $query;
     }
 
     /**
@@ -94,11 +106,17 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    /**
+     * @return BelongsTo
+     */
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
     }
 
+    /**
+     * @return BelongsToMany
+     */
     public function sections(): BelongsToMany
     {
         return $this->belongsToMany(Section::class);

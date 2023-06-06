@@ -35,18 +35,7 @@ class CsvExportRecordController extends Controller
         $query = User::query();
 
         // 検索ワードに一致するユーザー名・会社名・部署名を取得
-        if ($searchOption === 'user') {
-            $users = $query->where('name', 'like', '%' . $searchQuery . '%');
-        } elseif ($searchOption === 'company') {
-            $users = $query->whereHas('company', function ($query) use ($searchQuery) {
-                $query->where('name', 'like', '%' . $searchQuery . '%');
-            });
-        } elseif ($searchOption === 'section') {
-            $users = $query->whereHas('sections', function ($query) use ($searchQuery) {
-                $query->where('name', 'like', '%' . $searchQuery . '%');
-            });
-        }
-        $users = $query->get();
+        $users = $query->search($searchQuery, $searchOption)->get();
 
         $file_name = sprintf('users-%s.csv', now()->format('YmdHis'));
         $csvData = $this->generateCsvData($users);
