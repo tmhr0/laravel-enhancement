@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CsvExportRecord;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -60,6 +62,12 @@ class CsvExportRecordController extends Controller
         // file_put_contents() を使用してCSVデータをファイルに書き込む
         $file_path = storage_path('app/csv/' . $file_name);
         file_put_contents($file_path, $csvData);
+
+        //CsvExportRecordテーブルにデータを登録
+        CsvExportRecord::create([
+            'download_user_id' => Auth::user()->id,
+            'file_name' => $file_name,
+        ]);
 
         return Storage::download($path);
     }
