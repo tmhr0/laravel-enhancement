@@ -38,9 +38,15 @@ class CsvExportRecordControllerTest extends TestCase
 
         $this->get($url)->assertRedirect(route('login'));
 
-        $response = $this->actingAs($this->user)->get($url);
+        // CsvExportRecordテーブルにデータが追加されることを確認する
+        $response = $this->actingAs($this->user)->post(route('users.csv-export-records.store'));
 
         $response->assertStatus(200);
+
+        $this->assertDatabaseHas('csv_export_records', [
+            'download_user_id' => $this->user->id,
+            'file_name' => 'users-' . now()->format('YmdHis') . '.csv',
+        ]);
     }
 
 
