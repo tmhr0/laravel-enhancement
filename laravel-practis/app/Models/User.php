@@ -61,19 +61,19 @@ class User extends Authenticatable
      */
     public function scopeSearch($query, $searchQuery, $searchOption): mixed
     {
-        if ($searchOption === 'user') {
+        return $query->when($searchOption === 'user', function ($query) use ($searchQuery) {
             return $query->where('name', 'like', '%' . $searchQuery . '%');
-        } elseif ($searchOption === 'company') {
-            return $query->whereHas('company', function ($query) use ($searchQuery) {
-                $query->where('name', 'like', '%' . $searchQuery . '%');
+        })
+            ->when($searchOption === 'company', function ($query) use ($searchQuery) {
+                return $query->whereHas('company', function ($query) use ($searchQuery) {
+                    $query->where('name', 'like', '%' . $searchQuery . '%');
+                });
+            })
+            ->when($searchOption === 'section', function ($query) use ($searchQuery) {
+                return $query->whereHas('sections', function ($query) use ($searchQuery) {
+                    $query->where('name', 'like', '%' . $searchQuery . '%');
+                });
             });
-        } elseif ($searchOption === 'section') {
-            return $query->whereHas('sections', function ($query) use ($searchQuery) {
-                $query->where('name', 'like', '%' . $searchQuery . '%');
-            });
-        }
-
-        return $query;
     }
 
     /**
