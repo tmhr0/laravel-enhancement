@@ -8,6 +8,10 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function index(Request $request): View
     {
         $request->validate([

@@ -12,11 +12,18 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class CsvExportRecordController extends Controller
 {
+    /**
+     * @return View
+     */
     public function index(): View
     {
         return view('users.csv-export-records.index');
     }
 
+    /**
+     * @param Request $request
+     * @return BinaryFileResponse
+     */
     public function store(Request $request): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
         // 検索キーワードと検索オプションを取得
@@ -26,7 +33,7 @@ class CsvExportRecordController extends Controller
         // ユーザーデータを検索
         $query = User::query();
 
-        // 検索結果から一致するユーザー名・会社名・部署名を$usersを取得
+        // 検索ワードに一致するユーザー名・会社名・部署名を取得
         if ($searchOption === 'user') {
             $users = $query->where('name', 'like', '%' . $searchQuery . '%');
         } elseif ($searchOption === 'company') {
@@ -49,6 +56,10 @@ class CsvExportRecordController extends Controller
         return response()->download(public_path($file_name));
     }
 
+    /**
+     * @param $users
+     * @return false|string
+     */
     private function generateCsvData($users)
     {
         $header = ['ID', '名前', '所属会社', '所属部署'];
