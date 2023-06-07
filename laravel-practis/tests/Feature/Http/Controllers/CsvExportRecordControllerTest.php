@@ -3,6 +3,8 @@
 namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\CsvExportRecord;
+use App\Models\Section;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -18,8 +20,39 @@ class CsvExportRecordControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->company = Company::factory()->create();
-        $this->user = User::factory(['company_id' => $this->company->id])->create();
+        $this->company = Company::factory()->create([
+            'name' => 'アドミン会社'
+        ]);
+
+        $this->user = User::factory([
+            'company_id' => $this->company->id,
+            'name' => 'サンプルアドミン',
+            'role' => 'admin',
+        ])->create();
+
+        $this->section = Section::factory([
+            'company_id' => $this->company->id,
+            'name' => 'アドミン部署'
+        ])->create();
+
+        $this->section->users()->attach($this->user->id);
+    }
+
+    public function test_model_attributes()
+    {
+        // テスト用のデータを用意
+        $attributes = [
+            'download_user_id' => 1,
+            'file_name' => 'test.csv',
+            'file_path' => 'app/csv/file.csv',
+        ];
+
+        $csvExportRecord = new CsvExportRecord($attributes);
+
+        // 属性が正しく設定されているかをアサーション
+        $this->assertEquals($attributes['download_user_id'], $csvExportRecord->download_user_id);
+        $this->assertEquals($attributes['file_name'], $csvExportRecord->file_name);
+        $this->assertEquals($attributes['file_path'], $csvExportRecord->file_path);
     }
 
     public function test_index()
