@@ -6,6 +6,7 @@ use App\Models\Company;
 use App\Models\CsvExportRecord;
 use App\Models\Section;
 use App\Models\User;
+use App\Policies\UserPolicy;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Storage;
@@ -21,21 +22,38 @@ class CsvExportRecordControllerTest extends TestCase
         parent::setUp();
 
         $this->company = Company::factory()->create([
-            'name' => 'アドミン会社'
+            'name' => 'ユーザー会社'
         ]);
 
         $this->user = User::factory([
             'company_id' => $this->company->id,
-            'name' => 'サンプルアドミン',
-            'role' => 'admin',
+            'name' => 'サンプルユーザー',
+            'role' => 'user',
         ])->create();
 
         $this->section = Section::factory([
             'company_id' => $this->company->id,
-            'name' => 'アドミン部署'
+            'name' => 'ユーザー部署'
         ])->create();
 
         $this->section->users()->attach($this->user->id);
+
+        $this->company2 = Company::factory()->create([
+            'name' => 'アドミン会社'
+        ]);
+
+        $this->admin = User::factory([
+            'company_id' => $this->company2->id,
+            'name' => 'サンプルアドミン',
+            'role' => 'admin',
+        ])->create();
+
+        $this->section2 = Section::factory([
+            'company_id' => $this->company2->id,
+            'name' => 'アドミン部署'
+        ])->create();
+
+        $this->section2->users()->attach($this->admin->id);
     }
 
     public function test_model_attributes()
@@ -72,13 +90,29 @@ class CsvExportRecordControllerTest extends TestCase
 
     public function test_index()
     {
+        // ユーザーのroleがuserの場合のページ切り替え
         $url = route('users.csv-export-records.index');
-
-        $this->get($url)->assertRedirect(route('login'));
-
         $response = $this->actingAs($this->user)->get($url);
 
-        $response->assertStatus(200);
+        // レスポンスに制限メッセージが含まれることを確認
+        $response->assertSee('このページはユーザー権限での閲覧が制限されています');
+
+        // UserPolicyのuserAccessメソッドを呼び出して認可拒否を確認する
+        $user = User::factory()->create();
+
+        $policy = new UserPolicy();
+        $result = $policy->userAccess($user);
+
+        $this->assertFalse($result);
+
+        // ユーザーのroleがadminの場合のページ切り替え
+        // ログインしてテスト用のページにアクセス
+        $url = route('users.csv-export-records.index');
+        $response = $this->actingAs($this->admin)->get($url);
+
+        // レスポンスに制限メッセージが含まれないことを確認
+        $response->assertDontSee('このページはユーザー権限での閲覧が制限されています');
+
     }
 
     public function test_store()
