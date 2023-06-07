@@ -55,6 +55,21 @@ class CsvExportRecordControllerTest extends TestCase
         $this->assertEquals($attributes['file_path'], $csvExportRecord->file_path);
     }
 
+    public function test_relation()
+    {
+        $user = User::factory()->create();
+
+        $recordData = [
+            'download_user_id' => $user->id,
+            'file_name' => 'test.csv',
+        ];
+
+        $record = CsvExportRecord::create($recordData);
+
+        $this->assertInstanceOf(User::class, $record->user);
+        $this->assertEquals($user->id, $record->user->id);
+    }
+
     public function test_index()
     {
         $url = route('users.csv-export-records.index');
