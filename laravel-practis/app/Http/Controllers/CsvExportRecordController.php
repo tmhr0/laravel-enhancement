@@ -18,7 +18,9 @@ class CsvExportRecordController extends Controller
      */
     public function index(): View
     {
-        return view('users.csv-export-records.index');
+        $records = CsvExportRecord::with('user')->get();
+
+        return view('users.csv-export-records.index', compact('records'));
     }
 
     /**
