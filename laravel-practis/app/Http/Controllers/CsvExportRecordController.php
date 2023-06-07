@@ -95,4 +95,16 @@ class CsvExportRecordController extends Controller
 
         return $csvData;
     }
+
+    public function download($id)
+    {
+        $record = CsvExportRecord::findOrFail($id);
+        $file_path = 'csv/' . $record->file_name;
+
+        if (!Storage::exists($file_path)) {
+            return redirect()->back()->withErrors(['error' => '該当ファイルが存在しません。']);
+        }
+
+        return Storage::download($file_path);
+    }
 }

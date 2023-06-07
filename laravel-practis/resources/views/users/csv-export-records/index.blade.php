@@ -5,6 +5,16 @@
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+                    @if($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                     <table class="table table-striped">
                         <thead>
                         <tr>
@@ -18,7 +28,11 @@
                             <tr>
                                 <td>{{ $record->id }}</td>
                                 <td>{{ $record->user->name }}</td>
-                                <td>{{ $record->file_name }}</td>
+                                <td>
+                                    <a href="{{ route('users.csv-export-records.download', $record->id) }}">
+                                        {{ $record->file_name }}
+                                    </a>
+                                </td>
                             </tr>
                         @endforeach
                         </tbody>
