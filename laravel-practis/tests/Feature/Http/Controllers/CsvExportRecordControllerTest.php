@@ -114,13 +114,35 @@ class CsvExportRecordControllerTest extends TestCase
         $response->assertDontSee('このページはユーザー権限での閲覧が制限されています');
     }
     public function test_csv_records(){
+        // テスト用のCSVファイルを作成
+        $fileContent = 'テストデータ';
+        $file_name = 'users-' . now()->format('YmdHis') . '.csv';
+        $file_path = 'csv/' . $file_name;
+        Storage::disk('local')->put($file_path, $fileContent);
 
-        //事前にテスト用のCSVデータを作成する
-        //ファイルパス先にcsvファイルが存在しているか確認
-        //再DLできる場合、DLが完了したか確認
-        //再DLできる場合、ファイル名が一致しているか確認
-        //再DLできない場合、エラーメッセージの確認
+        $url = route('users.csv-export-records.store');
+        $this->actingAs($this->admin)->post($url);
+
+        $csvExportRecord = CsvExportRecord::query()->latest()->first();
+
+        // ダウンロードリンクが表示されていることを確認
+        $url = route('users.csv-export-records.index');
+        $response = $this->actingAs($this->admin)->get($url);
+        $this->assertStringContainsString($file_name, $response->getContent());
+
+        // ファイルが正常にダウンロードされることを確認
+        $url = route('users.csv-export-records.download', $csvExportRecord);
+        $response = $this->actingAs($this->admin)->get($url);
+        $response->assertStatus(200);
+        $response->assertDownload();
+
+        //再ダウンロードをテストする。
+        $this->csvExportRecord = CsvExportRecord::factory()->create();
+        $url = route('users.csv-export-records.download', $this->csvExportRecord);
+        $response = $this->actingAs($this->admin)->get($url);
+        $response->assertStatus(200);
     }
+
 
     public function test_store()
     {
