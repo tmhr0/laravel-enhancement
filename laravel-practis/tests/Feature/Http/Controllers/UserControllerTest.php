@@ -93,6 +93,7 @@ class UserControllerTest extends TestCase
         // ユーザー名で検索をした時、ユーザー名・会社名・部署名が表示される
         $url = route('users.index', [
             'search' => 'サンプルアドミン',
+            'search_option' => 'user',
         ]);
         $response = $this->actingAs($this->admin)->get($url)->assertStatus(200);
 
@@ -108,6 +109,7 @@ class UserControllerTest extends TestCase
         // 会社名で検索をした時、ユーザー名・会社名・部署名が表示される
         $url = route('users.index', [
             'search' => 'アドミン会社',
+            'search_option' => 'company',
         ]);
         $response = $this->actingAs($this->admin)->get($url)->assertStatus(200);
 
@@ -123,6 +125,7 @@ class UserControllerTest extends TestCase
         // 部署名で検索をした時、ユーザー名・会社名・部署名が表示される
         $url = route('users.index', [
             'search' => 'アドミン部署',
+            'search_option' => 'section',
         ]);
 
         $response = $this->actingAs($this->admin)->get($url)->assertStatus(200);

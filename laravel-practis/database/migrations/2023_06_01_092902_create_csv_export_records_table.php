@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('csv_export_histories', function (Blueprint $table) {
+        Schema::create('csv_export_records', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('download_user_id')->nullable(false)->comment('ダウンロードユーザーID');
             $table->foreign('download_user_id')->references('id')->on('users');

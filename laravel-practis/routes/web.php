@@ -29,7 +29,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::post('/users', [\App\Http\Controllers\CsvExportRecordController::class, 'store'])->name('users.csv-export-records.store');
+
     Route::get('users/csv-export-records', [\App\Http\Controllers\CsvExportRecordController::class, 'index'])->name('users.csv-export-records.index');
+
     Route::resource('companies', \App\Http\Controllers\CompanyController::class);
     Route::resource('companies.sections', \App\Http\Controllers\SectionController::class);
     Route::resource('sections.users', \App\Http\Controllers\SectionUserController::class)->only(['store', 'destroy']);
