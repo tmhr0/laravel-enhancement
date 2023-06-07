@@ -88,7 +88,7 @@ class CsvExportRecordControllerTest extends TestCase
         $this->assertEquals($user->id, $record->user->id);
     }
 
-    public function test_index()
+    public function test_csv_index()
     {
         // ユーザーのroleがuserの場合のページ切り替え
         $url = route('users.csv-export-records.index');
@@ -112,7 +112,14 @@ class CsvExportRecordControllerTest extends TestCase
 
         // レスポンスに制限メッセージが含まれないことを確認
         $response->assertDontSee('このページはユーザー権限での閲覧が制限されています');
+    }
+    public function test_csv_records(){
 
+        //事前にテスト用のCSVデータを作成する
+        //ファイルパス先にcsvファイルが存在しているか確認
+        //再DLできる場合、DLが完了したか確認
+        //再DLできる場合、ファイル名が一致しているか確認
+        //再DLできない場合、エラーメッセージの確認
     }
 
     public function test_store()
