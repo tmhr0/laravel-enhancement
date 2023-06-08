@@ -54,7 +54,7 @@ class CsvExportRecordController extends Controller
 
         //CsvExportRecordテーブルにデータを登録
         CsvExportRecord::create([
-            'download_user_id' => Auth::user()->id,
+            'download_user_id' => Auth::id(),
             'file_name' => $file_name,
         ]);
 
@@ -68,10 +68,7 @@ class CsvExportRecordController extends Controller
     private function generateCsvData($users)
     {
         $header = ['ID', '名前', '所属会社', '所属部署'];
-        $data = [];
-
-        // ヘッダーデータを追加
-        $data[] = $header;
+        $data = [$header];
 
         // ユーザーデータを追加
         foreach ($users as $user) {
