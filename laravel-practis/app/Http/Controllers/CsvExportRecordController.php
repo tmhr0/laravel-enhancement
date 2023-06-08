@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CsvExportRecord;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -98,19 +99,17 @@ class CsvExportRecordController extends Controller
 
     /**
      * @param $id
-     * @return \Illuminate\Http\RedirectResponse|StreamedResponse
+     * @return RedirectResponse|StreamedResponse
      */
-    public function download($id): StreamedResponse|\Illuminate\Http\RedirectResponse
+    public function download($id): StreamedResponse|RedirectResponse
     {
         $record = CsvExportRecord::findOrFail($id);
 
         $file_path = 'csv/' . $record->file_name;
 
-        if (!Storage::exists($file_path)) {
-            // @codeCoverageIgnoreStart
-            return redirect()->back()->withErrors(['error' => '該当ファイルが存在しません。']);
-            // @codeCoverageIgnoreEnd
+        if (Storage::exists($file_path)) {
+            return Storage::download($file_path);
         }
-        return Storage::download($file_path);
+        return redirect()->back()->withErrors(['error' => '該当ファイルが存在しません。']); // @codeCoverageIgnore
     }
 }
