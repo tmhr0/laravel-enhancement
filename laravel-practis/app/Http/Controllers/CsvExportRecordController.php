@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CsvExportRecord;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -18,7 +19,9 @@ class CsvExportRecordController extends Controller
      */
     public function index(): View
     {
-        return view('users.csv-export-records.index');
+        $records = CsvExportRecord::with('user')->get();
+
+        return view('users.csv-export-records.index', compact('records'));
     }
 
     /**
@@ -51,7 +54,7 @@ class CsvExportRecordController extends Controller
 
         //CsvExportRecordテーブルにデータを登録
         CsvExportRecord::create([
-            'download_user_id' => Auth::user()->id,
+            'download_user_id' => Auth::id(),
             'file_name' => $file_name,
         ]);
 
@@ -65,10 +68,7 @@ class CsvExportRecordController extends Controller
     private function generateCsvData($users)
     {
         $header = ['ID', '名前', '所属会社', '所属部署'];
-        $data = [];
-
-        // ヘッダーデータを追加
-        $data[] = $header;
+        $data = [$header];
 
         // ユーザーデータを追加
         foreach ($users as $user) {
@@ -92,5 +92,21 @@ class CsvExportRecordController extends Controller
         fclose($output);
 
         return $csvData;
+    }
+
+    /**
+     * @param $id
+     * @return RedirectResponse|StreamedResponse
+     */
+    public function download($id): StreamedResponse|RedirectResponse
+    {
+        $record = CsvExportRecord::findOrFail($id);
+
+        $file_path = 'csv/' . $record->file_name;
+
+        if (Storage::exists($file_path)) {
+            return Storage::download($file_path);
+        }
+        return redirect()->back()->withErrors(['error' => '該当ファイルが存在しません。']); // @codeCoverageIgnore
     }
 }

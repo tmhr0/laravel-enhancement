@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/users', [\App\Http\Controllers\CsvExportRecordController::class, 'store'])->name('users.csv-export-records.store');
 
     Route::get('users/csv-export-records', [\App\Http\Controllers\CsvExportRecordController::class, 'index'])->name('users.csv-export-records.index');
+    Route::get('users/csv-export-records/{id}', [\App\Http\Controllers\CsvExportRecordController::class, 'download'])->name('users.csv-export-records.download');
 
     Route::resource('companies', \App\Http\Controllers\CompanyController::class);
     Route::resource('companies.sections', \App\Http\Controllers\SectionController::class);

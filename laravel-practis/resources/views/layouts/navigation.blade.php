@@ -38,8 +38,16 @@
                             {{ __('Profile') }}
                         </x-dropdown-link>
 
+                        <x-dropdown-link :href="route('companies.index')">
+                            {{ __('Company List') }}
+                        </x-dropdown-link>
+
                         <x-dropdown-link :href="route('users.index')">
                             {{ __('User List') }}
+                        </x-dropdown-link>
+
+                        <x-dropdown-link :href="route('users.csv-export-records.index')">
+                            {{ __('CSV Record') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->
